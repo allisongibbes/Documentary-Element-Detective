@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentary Element Detective</title>
+    <style>
+        body {
+            background-color: #22272e;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #f1e800;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        p.instructions {
+            color: #adbac7;
+            margin-bottom: 20px;
+            text-align: center;
+            max-width: 650px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 700px;
+            background-color: #2d333b;
+            border: 2px solid #444c56;
+            border-radius: 8px;
+            padding: 20px;
+            gap: 20px;
+        }
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background-color: #1c2128;
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #f1e800;
+        }
+        .challenge-box {
+            background-color: #1c2128;
+            border: 2px solid #f1e800;
+            border-radius: 6px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .scenario-tag {
+            display: inline-block;
+            background-color: #f1e800;
+            color: #22272e;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            align-self: flex-start;
+        }
+        .scenario-text {
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 0;
+            color: #ffffff;
+        }
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .option-btn {
+            background-color: #444c56;
+            color: #ffffff;
+            border: 2px solid transparent;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.2s, border-color 0.2s;
+            text-align: left;
+        }
+        .option-btn:hover:not(:disabled) {
+            background-color: #373e47;
+            border-color: #f1e800;
+        }
+        .option-btn:disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+        .feedback-area {
+            background-color: #373e47;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #f1e800;
+            display: none;
+        }
+        .feedback-area h4 {
+            margin: 0 0 5px 0;
+            color: #f1e800;
+        }
+        .feedback-area p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        .next-btn {
+            background-color: #f1e800;
+            color: #22272e;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            align-self: center;
+            display: none;
+        }
+        .next-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Documentary Element Detective</h2>
+    <p class="instructions">Test your knowledge! Read each documentary production scenario and correctly identify which core filmmaking element is being described.</p>
+
+    <div class="container">
+        <!-- Score & Progress -->
+        <div class="score-board">
+            <span id="progress-indicator">Scenario 1 of 7</span>
+            <span id="score-indicator">Score: 0 / 0</span>
+        </div>
+
+        <!-- Challenge Screen -->
+        <div class="challenge-box">
+            <span id="scenario-badge" class="scenario-tag">Challenge 1</span>
+            <p id="scenario-desc" class="scenario-text">Loading scenario...</p>
+        </div>
+
+        <!-- Options Grid -->
+        <div id="options-container" class="options-grid">
+            <!-- Dynamically injected option buttons -->
+        </div>
+
+        <!-- Feedback & Explanation -->
+        <div id="feedback-box" class="feedback-area">
+            <h4 id="feedback-title">Result</h4>
+            <p id="feedback-desc"></p>
+        </div>
+
+        <button id="next-btn" class="next-btn" onclick="nextChallenge()">Next Challenge</button>
+    </div>
+
+    <script>
+        const challenges = [
+            {
+                badge: "Challenge 1",
+                text: "A camera crew films workers quietly assembling parts on a factory floor without staging, interviewing, or directing them, capturing real-time unscripted behavior.",
+                correct: "Observational Footage",
+                explanation: "This is Observational Footage (Direct Cinema / Cinéma Vérité), where the filmmaker acts as an unobtrusive observer to capture authentic, unscripted human activity.",
+                options: ["B-Roll", "Observational Footage", "Reenactments", "Archival Material"]
+            },
+            {
+                badge: "Challenge 2",
+                text: "To illustrate a historical battle from 1812 where no camera footage exists, the director hires actors in period costumes to stage and film the clash.",
+                correct: "Reenactments",
+                explanation: "This is a Reenactment—a staged, dramatic re-creation performed by actors when original visual artifacts are missing.",
+                options: ["Archival Material", "B-Roll", "Reenactments", "Voice-Over Narration"]
+            },
+            {
+                badge: "Challenge 3",
+                text: "An unseen, authoritative speaker guides the audience through global climate statistics while historical photographs flash across the screen.",
+                correct: "Voice-Over Narration",
+                explanation: "This is Voice-Over Narration, where a disembodied speaker supplies historical context and guides the film's overarching narrative argument.",
+                options: ["Voice-Over Narration", "Interviews", "Observational Footage", "B-Roll"]
+            },
+            {
+                badge: "Challenge 4",
+                text: "The editor splices in 1940s newsreels and handwritten diary pages from soldiers to provide tangible historical evidence of wartime life.",
+                correct: "Archival Material",
+                explanation: "This is Archival Material, consisting of preexisting visual, audio, or textual artifacts that anchor the film in historical reality.",
+                options: ["B-Roll", "Reenactments", "Archival Material", "Interviews"]
+            },
+            {
+                badge: "Challenge 5",
+                text: "A scientist sits directly facing an off-camera interviewer in a quiet room, sharing personal testimony and expert analysis about marine biology.",
+                correct: "Interviews (Talking Heads)",
+                explanation: "This is an Interview (Talking Head), serving as the narrative backbone of non-fiction film through direct subject testimony.",
+                options: ["Observational Footage", "Interviews (Talking Heads)", "Voice-Over Narration", "B-Roll"]
+            },
+            {
+                badge: "Challenge 6",
+                text: "While an interviewee discusses growing up on a farm, the screen shows scenic exterior shots of rolling wheat fields and tractors moving in the distance.",
+                correct: "B-Roll",
+                explanation: "This is B-Roll—supplementary footage filmed to build environmental context and visually cover edit cuts made during primary interviews.",
+                options: ["Reenactments", "Archival Material", "B-Roll", "Observational Footage"]
+            },
+            {
+                badge: "Challenge 7",
+                text: "A swelling, melancholic string arrangement is added during post-production over a quiet scene of an empty town to evoke deep emotional sadness from the audience.",
+                correct: "Non-Diegetic Sound & Score",
+                explanation: "This is a Non-Diegetic Musical Score, an audio element added in post-production to actively steer how the audience feels about the on-screen events.",
+                options: ["Non-Diegetic Sound & Score", "Voice-Over Narration", "Interviews (Talking Heads)", "Observational Footage"]
+            }
+        ];
+
+        let currentChallenge = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadChallenge() {
+            answered = false;
+            const c = challenges[currentChallenge];
+            
+            document.getElementById('progress-indicator').innerText = `Scenario ${currentChallenge + 1} of ${challenges.length}`;
+            document.getElementById('score-indicator').innerText = `Score: ${score} / ${currentChallenge}`;
+            document.getElementById('scenario-badge').innerText = c.badge;
+            document.getElementById('scenario-desc').innerText = c.text;
+
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            // Shuffle options for interactivity
+            const shuffledOptions = [...c.options].sort(() => Math.random() - 0.5);
+
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt, c.correct, c.explanation);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('feedback-box').style.display = 'none';
+            document.getElementById('next-btn').style.display = 'none';
+        }
+
+        function checkAnswer(selected, correct, explanation) {
+            if (answered) return;
+            answered = true;
+
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.innerText === correct) {
+                    btn.style.backgroundColor = '#2ecc71';
+                    btn.style.color = '#22272e';
+                } else if (btn.innerText === selected && selected !== correct) {
+                    btn.style.backgroundColor = '#e74c3c';
+                    btn.style.color = '#ffffff';
+                }
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.style.display = 'block';
+
+            if (selected === correct) {
+                score++;
+                document.getElementById('feedback-title').innerText = 'Correct! Great Detective Work.';
+                document.getElementById('feedback-title').style.color = '#2ecc71';
+                feedbackBox.style.borderLeftColor = '#2ecc71';
+            } else {
+                document.getElementById('feedback-title').innerText = 'Incorrect.';
+                document.getElementById('feedback-title').style.color = '#e74c3c';
+                feedbackBox.style.borderLeftColor = '#e74c3c';
+            }
+
+            document.getElementById('feedback-desc').innerText = explanation;
+            document.getElementById('score-indicator').innerText = `Score: ${score} / ${currentChallenge + 1}`;
+
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.style.display = 'block';
+            if (currentChallenge === challenges.length - 1) {
+                nextBtn.innerText = 'Restart Challenge';
+            } else {
+                nextBtn.innerText = 'Next Challenge';
+            }
+        }
+
+        function nextChallenge() {
+            currentChallenge++;
+            if (currentChallenge >= challenges.length) {
+                currentChallenge = 0;
+                score = 0;
+            }
+            loadChallenge();
+        }
+
+        window.onload = loadChallenge;
+    </script>
+</body>
+</html>
